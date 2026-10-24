@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Carrera de Romanos 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#fff1f6;--card:#ffffff;--ink:#4a2340;--soft:#8a6a80;--rose:#ff6fa5;--lilac:#c9b3ff;--mint:#a6ecd3;--peach:#ffd0a1;--sun:#ffe28a;--line:#ffd3e3;--q:#e6dcff;--c:#ffe3c7;--r:#d3f6e8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#2a1426;--card:#3a1d34;--ink:#ffeaf4;--soft:#d9b3c9;--line:#5a2c50;--q:#4a3a78;--c:#6a4a33;--r:#2e5a4c;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:'Fredoka',system-ui,sans-serif;min-height:100%;line-height:1.45}
+main{max-width:760px;margin:0 auto;padding:16px}
+h1{font-size:clamp(1.9rem,6vw,2.8rem);margin:.2em 0;text-align:center;color:var(--rose);font-weight:700}
+h2{margin:.2em 0 .5em}
+.sub{text-align:center;color:var(--soft);margin:0 0 16px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:24px;padding:18px;margin:12px 0}
+ol.rules{padding-left:1.3em;margin:0}ol.rules li{margin:.5em 0}
+.btn{font:inherit;font-weight:600;border:0;border-radius:999px;padding:12px 24px;background:var(--rose);color:#fff;cursor:pointer;font-size:1.05rem}
+.btn:hover{filter:brightness(1.06)}.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.alt{background:var(--lilac);color:#3b2466}
+:focus-visible{outline:3px solid var(--rose);outline-offset:2px}
+.center{text-align:center}
+.counts{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.counts .btn{width:64px;height:64px;padding:0;font-size:1.6rem;border-radius:20px}
+input[type=text]{font:inherit;width:100%;padding:12px 16px;border-radius:16px;border:2px solid var(--line);background:var(--bg);color:var(--ink);font-size:1.1rem}
+.toks{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:14px 0}
+.tok{font-size:2.2rem;background:var(--bg);border:3px solid var(--line);border-radius:20px;padding:8px;cursor:pointer}
+.tok.sel{border-color:var(--rose);background:var(--sun)}
+.tok:disabled{opacity:.25;cursor:not-allowed}
+.board{display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(5,1fr);gap:5px;background:var(--card);padding:8px;border-radius:24px;border:2px solid var(--line)}
+.t{aspect-ratio:1;border-radius:14px;background:var(--bg);border:2px solid var(--line);display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;font-size:clamp(.9rem,3.6vw,1.3rem);min-width:0}
+.t.q{background:var(--q)}.t.c{background:var(--c)}.t.r{background:var(--r)}
+.t.s,.t.g{background:var(--sun);font-weight:700}
+.t small{position:absolute;top:2px;left:5px;font-size:.6rem;color:var(--soft)}
+.pw{display:flex;flex-wrap:wrap;justify-content:center;font-size:clamp(.8rem,3.4vw,1.2rem);line-height:1}
+.pw span{display:inline-block;transition:transform .2s}
+.pw span.me{transform:scale(1.25)}
+.legend{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;font-size:.85rem;color:var(--soft);margin:8px 0}
+.bar{display:flex;align-items:center;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.die{width:64px;height:64px;border-radius:18px;background:var(--sun);display:flex;align-items:center;justify-content:center;font-size:2rem;font-weight:700;color:#4a2340}
+.die.roll{animation:sh .5s}
+@keyframes sh{0%,100%{transform:rotate(0)}25%{transform:rotate(-18deg)}75%{transform:rotate(18deg)}}
+.plist{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:4px 12px;border-radius:999px;background:var(--bg);border:2px solid var(--line);font-size:.9rem}
+.chip.on{border-color:var(--rose);background:var(--sun);color:#4a2340}
+.modal{position:fixed;inset:0;background:rgba(60,20,50,.55);display:flex;align-items:center;justify-content:center;padding:16px;z-index:20}
+.box{background:var(--card);border-radius:28px;padding:22px;max-width:480px;width:100%;max-height:90%;overflow:auto;border:3px solid var(--rose)}
+.tag{display:inline-block;padding:2px 12px;border-radius:999px;font-size:.85rem;font-weight:600;margin-bottom:6px;color:#3b2466}
+.hint{color:var(--soft);font-style:italic;margin:.3em 0 1em}
+.opt{display:block;width:100%;text-align:left;font:inherit;padding:12px 16px;margin:8px 0;border-radius:16px;border:2px solid var(--line);background:var(--bg);color:var(--ink);cursor:pointer}
+.opt:hover:not(:disabled){border-color:var(--rose)}
+.opt.ok{background:#b8f0d6;border-color:#2fa37a;color:#12402f}
+.opt.no{background:#ffc4d4;border-color:#d6426e;color:#4a1022}
+.msg{font-weight:600;margin:.8em 0}
+.win{font-size:4rem}
+@media (prefers-reduced-motion:reduce){.die.roll{animation:none}}
+.warn{background:var(--c);border-radius:16px;padding:10px 14px;margin:10px 0;font-size:.95rem}.code{font-weight:700;letter-spacing:.15em;color:var(--rose)}.ghost{background:transparent;color:var(--soft);border:2px solid var(--line);padding:6px 14px;font-size:.85rem}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+<script>
+  import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+var FIREBASE_CONFIG={
+ apiKey: "AIzaSyDVOG5N3mEGTqSkOGtzIWGgki7_4XPAowo",
+  authDomain: "juegocelula.firebaseapp.com",
+  databaseURL: "https://juegocelula-default-rtdb.firebaseio.com",
+  projectId: "juegocelula",
+  storageBucket: "juegocelula.firebasestorage.app",
+  messagingSenderId: "562415084359",
+  appId: "1:562415084359:web:0dade9ba9e17931c8d6262",
+  measurementId: "G-X561MN9PLL"
+};
+
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+var TOK=['⭐','🌸','💖','🦋','🎀','🌷','🍓','🌈','🐰','🌺'];
+var Q=[
+{t:'¿Quién escribió la carta a los romanos?',h:'Romanos 1:1',o:['Pablo','Pedro','Timoteo']},
+{t:'¿A quién se dirige la carta?',h:'Romanos 1:7',o:['A todos los amados de Dios que están en Roma, llamados a ser santos','A los apóstoles reunidos en Jerusalén','A las iglesias de Galacia']},
+{t:'¿De qué no se avergüenza Pablo?',h:'Romanos 1:16',o:['Del evangelio','De sus cadenas','De su pasado']},
+{t:'¿Quién vivirá por la fe?',h:'Romanos 1:17',o:['El justo','El rico','El sabio']},
+{t:'¿Qué revela la creación acerca de Dios?',h:'Romanos 1:20',o:['Su poder eterno y su naturaleza divina','Sus milagros en el templo','Las leyes escritas en piedra']},
+{t:'¿Por qué quería Pablo visitar a los creyentes en Roma?',h:'Romanos 1:11-12',o:['Para fortalecernos y animarnos mutuamente en la fe','Para pedirles una ofrenda','Para corregir sus errores']}];
+var C=[
+{t:'Completa: «Pero según el ______, fue designado con poder Hijo de Dios por la ______».',o:['Espíritu de santidad / resurrección','Espíritu de poder / ascensión','Espíritu de verdad / creación']},
+{t:'Completa el versículo: «Porque no me avergüenzo del ______».',o:['evangelio','pasado','mundo']},
+{t:'¿Qué frase de ánimo le darías a alguien en un momento difícil?',free:true}];
+var R=[
+{t:'¿Qué nos enseña la creación acerca de Dios?',h:'Romanos 1:20'},
+{t:'¿Cómo podemos demostrar nuestra fe a otros?'},
+{t:'¿Qué significa para ti no avergonzarte del evangelio?',h:'Romanos 1:16'}];
+var SP={2:['q',0],4:['c',0],5:['q',1],7:['r',0],9:['q',2],11:['c',1],12:['q',3],14:['r',1],16:['q',4],18:['c',2],20:['q',5],22:['r',2]};
+var DEC=['✨','🍬','🌸','🧁','🦄','🍭'];
+var app=document.getElementById('app');
+var db,uid,code,PL=[],GS=null,ME=null,JN='',JT=null,modalN=-1,subs=[],resolving=false,lastKey='',canW=true;
+function $(h){app.innerHTML=h}
+function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;')}
+function cp(o){return JSON.parse(JSON.stringify(o))}
+function sh(a){a=a.map(function(x,i){return{x:x,i:i}});a.sort(function(){return Math.random()-.5});return a}
+function P(id){return PL.filter(function(p){return p.id===id})[0]||{name:'?',tok:'❔'}}
+function gref(){return db.doc('rooms/'+code+'/meta/g')}
+function pdoc(id){return db.doc('rooms/'+code+'/players/'+id)}
+function isHost(){return PL.length>0&&PL[0].id===uid}
+function chip(p,on,x){return '<span class="chip'+(on?' on':'')+'">'+p.tok+' '+esc(p.name)+(x||'')+'</span>'}
+function tile(i){if(i===0)return{k:'s'};if(i===29)return{k:'g'};if(SP[i])return{k:SP[i][0],n:SP[i][1]};return{k:'b',e:DEC[i%6]}}
+function fail(e){$('<div class="card center"><h2>Sin conexión</h2><p>No se pudo conectar con la sala ('+esc((e&&e.code)||'error')+'). Recarga la página e inténtalo otra vez.</p></div>')}
+
+function init(){
+if(typeof firebase==='undefined'||!FIREBASE_CONFIG.databaseURL||FIREBASE_CONFIG.databaseURL.indexOf('TU-PROYECTO')>-1){
+return $('<h1>🏁 Carrera de Romanos 1</h1><div class="card center"><p>Falta pegar la configuración de Firebase en el código (busca <b>FIREBASE_CONFIG</b> al inicio del script).</p></div>')}
+firebase.initializeApp(FIREBASE_CONFIG);
+var fdb=firebase.database();
+db={
+doc:function(p){var r=fdb.ref(p);return{
+set:function(o){return r.set(o)},
+update:function(o){return r.update(o)},
+delete:function(){return r.remove()},
+onSnapshot:function(cb,er){var f=r.on('value',function(s){cb({exists:s.exists(),data:function(){return s.val()}})},er);return function(){r.off('value',f)}}}},
+collection:function(p){var r=fdb.ref(p);return{
+onSnapshot:function(cb,er){var f=r.on('value',function(s){var docs=[];s.forEach(function(c){var v=c.val(),k=c.key;docs.push({id:k,data:function(){return v}})});cb({docs:docs})},er);return function(){r.off('value',f)}}}}};
+try{uid=localStorage.getItem('romUid')}catch(e){}
+if(!uid){uid='u'+Math.random().toString(36).slice(2,10)+Date.now().toString(36);try{localStorage.setItem('romUid',uid)}catch(e){}}
+rules()}
+
+function rules(){
+$('<h1>🏁 Carrera de Romanos 1 🏁</h1><p class="sub">Un juego en línea para la célula</p><div class="card"><h2>Reglas del juego</h2><ol class="rules"><li>Cada jugadora escoge una ficha y se tira el dado para ver quién empieza.</li><li>En su turno, la jugadora tira el dado y avanza. Según la casilla en que caiga, le toca una pregunta, un reto o una reflexión.</li><li>Si responde correctamente una pregunta, avanza 2 casillas. Si completa el reto, avanza 1 casilla.</li><li>Si falla, no avanza y pasa el turno a la siguiente jugadora.</li><li>Gana quien llegue primero a la meta.</li></ol></div><div class="card"><label for="cd"><b>Código de la sala</b></label><p class="sub" style="text-align:left;margin:4px 0 10px">Todas escriben el mismo código para jugar juntas (por ejemplo CELULA).</p><input type="text" id="cd" maxlength="10" autocomplete="off" placeholder="CELULA">'+(canW?'':'<p class="warn">Tu cuenta solo puede ver esta página. Pide a quien la compartió que te dé permiso de colaboradora para poder jugar.</p>')+'<div class="center" style="margin-top:14px"><button class="btn" id="go">Entrar a la sala</button></div></div>');
+var cd=document.getElementById('cd');
+document.getElementById('go').onclick=function(){var c=cd.value.toUpperCase().replace(/[^A-Z0-9]/g,'');if(!c){cd.focus();return}enter(c)}}
+
+function enter(c){
+code=c;$('<div class="card center"><p>Entrando a la sala <span class="code">'+esc(c)+'</span>…</p></div>');
+subs.push(gref().onSnapshot(function(s){GS=s.exists?cp(s.data()):null;onData()},fail));
+subs.push(db.collection('rooms/'+code+'/players').onSnapshot(function(s){
+PL=s.docs.map(function(d){var o=cp(d.data());o.id=d.id;return o}).sort(function(a,b){return a.t-b.t});onData()},fail))}
+
+function onData(){ME=PL.filter(function(p){return p.id===uid})[0]||null;hostCheck();render()}
+
+function render(){
+var ph=(GS&&GS.phase)||'lobby';
+if(ph!=='play')close();
+if(!ME){if(ph==='lobby')return joinScreen();lastKey='';return $('<h1>🏁 Sala <span class="code">'+esc(code)+'</span></h1><div class="card center"><p>La partida ya empezó. Espera a que termine para jugar la próxima.</p></div>')}
+lastKey='';
+if(ph==='lobby')lobby();else if(ph==='roll')rollScreen();else if(ph==='play')board();else winScreen()}
+
+function joinScreen(){
+var taken=PL.map(function(p){return p.tok});
+if(JT&&taken.indexOf(JT)>-1)JT=null;
+var key='j'+taken.join('')+PL.length;if(key===lastKey)return;lastKey=key;
+if(PL.length>=10){return $('<h1>Sala <span class="code">'+esc(code)+'</span></h1><div class="card center"><p>La sala ya tiene 10 jugadoras.</p></div>')}
+var t=TOK.map(function(k){return '<button class="tok'+(k===JT?' sel':'')+'" data-k="'+k+'"'+(taken.indexOf(k)>-1?' disabled':'')+' aria-label="Ficha '+k+'">'+k+'</button>'}).join('');
+$('<h1>Sala <span class="code">'+esc(code)+'</span></h1><p class="sub">Ya conectadas: '+(PL.length||'ninguna todavía')+'</p><div class="card"><label for="nm">Tu nombre</label><input type="text" id="nm" maxlength="14" autocomplete="off" placeholder="Escribe tu nombre" value="'+esc(JN).replace(/"/g,'&quot;')+'"><p style="margin:14px 0 0">Escoge tu ficha</p><div class="toks">'+t+'</div><div class="center"><button class="btn" id="ok">Entrar al tablero</button></div></div>');
+var nm=document.getElementById('nm'),ok=document.getElementById('ok');
+function chk(){ok.disabled=!(JT&&nm.value.trim())||!canW}
+chk();nm.oninput=function(){JN=nm.value;chk()};
+[].forEach.call(app.querySelectorAll('.tok'),function(el){el.onclick=function(){JT=el.dataset.k;[].forEach.call(app.querySelectorAll('.tok'),function(x){x.classList.toggle('sel',x===el)});chk()}});
+ok.onclick=function(){ok.disabled=true;pdoc(uid).set({name:nm.value.trim(),tok:JT,t:Date.now(),roll:null}).catch(fail)}}
+
+function lobby(){
+var h=isHost(),n=PL.length;
+$('<h1>Sala <span class="code">'+esc(code)+'</span></h1><p class="sub">Esperando a las demás jugadoras…</p><div class="card center"><div class="plist" style="justify-content:center">'+PL.map(function(p){return chip(p,p.id===uid)}).join('')+'</div><p><b>'+n+'</b> '+(n===1?'jugadora conectada':'jugadoras conectadas')+'</p>'+(h?'<p class="sub">Cuando estén todas conectadas, inicia la partida.</p><button class="btn" id="st"'+(n<2?' disabled':'')+'>Iniciar partida</button>':'<p class="sub">La partida la inicia '+esc(PL[0].name)+' cuando estén todas.</p>')+'<p><button class="btn ghost" id="lv">Salir de la sala</button></p></div>');
+if(h)document.getElementById('st').onclick=function(){gref().set({phase:'roll',cand:PL.map(function(p){return p.id}),n:0}).catch(fail)};
+document.getElementById('lv').onclick=function(){pdoc(uid).delete().then(function(){JT=null})}}
+
+function rollScreen(){
+var cand=GS.cand||[],mine=cand.indexOf(uid)>-1&&typeof ME.roll!=='number';
+var rows=PL.map(function(p){return chip(p,cand.indexOf(p.id)>-1&&typeof p.roll!=='number',typeof p.roll==='number'?': '+p.roll:'')}).join(' ');
+$('<h1>¿Quién empieza?</h1><div class="card center"><div class="plist" style="justify-content:center">'+rows+'</div><p>'+(GS.tie?'¡Empate! Vuelven a tirar las empatadas. ':'')+(mine?'Es tu turno de tirar.':'Esperando a las demás…')+'</p><div class="die" id="d" style="margin:0 auto 14px">'+(typeof ME.roll==='number'?ME.roll:'?')+'</div>'+(mine?'<button class="btn" id="r">Tirar dado</button>':'')+'</div>');
+if(mine)document.getElementById('r').onclick=function(){this.disabled=true;var v=1+Math.floor(Math.random()*6);var d=document.getElementById('d');d.textContent=v;d.classList.add('roll');setTimeout(function(){pdoc(uid).update({roll:v}).catch(fail)},500)}}
+
+function hostCheck(){
+if(!GS||GS.phase!=='roll'||!ME||!isHost()||resolving)return;
+var cs=PL.filter(function(p){return GS.cand.indexOf(p.id)>-1});
+if(!cs.length||!cs.every(function(p){return typeof p.roll==='number'}))return;
+var mx=Math.max.apply(null,cs.map(function(p){return p.roll})),top=cs.filter(function(p){return p.roll===mx});
+resolving=true;
+var done=function(){resolving=false};
+if(top.length>1){
+Promise.all(top.map(function(p){return pdoc(p.id).update({roll:null})})).then(function(){return gref().set({phase:'roll',cand:top.map(function(p){return p.id}),n:GS.n+1,tie:true})}).then(done,done)}
+else{var pos={};PL.forEach(function(p){pos[p.id]=0});
+gref().set({phase:'play',order:PL.map(function(p){return p.id}),cur:PL.map(function(p){return p.id}).indexOf(top[0].id),pos:pos,die:0,st:'turn',n:0,msg:''}).then(done,done)}}
+
+function board(){
+var cur=GS.order[GS.cur],mine=cur===uid,cells='';
+for(var i=0;i<30;i++){
+var r=Math.floor(i/6),c=r%2===0?i%6:5-i%6,t=tile(i),ic='';
+if(t.k==='s')ic='🏠';else if(t.k==='g')ic='🏆';else if(t.k==='q')ic='❓';else if(t.k==='c')ic='🎯';else if(t.k==='r')ic='💭';else ic=t.e;
+var pw=GS.order.map(function(id){return GS.pos[id]===i?'<span class="'+(id===cur?'me':'')+'">'+P(id).tok+'</span>':''}).join('');
+cells+='<div class="t '+t.k+'" style="grid-row:'+(5-r)+';grid-column:'+(c+1)+'"><small>'+i+'</small><div>'+ic+'</div><div class="pw">'+pw+'</div></div>'}
+var chips=GS.order.map(function(id){return chip(P(id),id===cur,id===uid?' (tú)':'')}).join('');
+var cp0=P(cur),info='';
+if(GS.st==='tile'&&!mine){var tt=tile(GS.pos[cur]),o=tt.k==='q'?Q[tt.n]:tt.k==='c'?C[tt.n]:tt.k==='r'?R[tt.n]:null;info='<p class="msg">'+(o?esc(cp0.name)+' está respondiendo: '+esc(o.t)+(o.h?' ('+esc(o.h)+')':''):esc(cp0.name)+' cayó en una casilla libre.')+'</p>'}
+$('<h1>🏁 Sala <span class="code">'+esc(code)+'</span></h1><div class="card bar"><div><div class="plist">'+chips+'</div><p style="margin:8px 0 0">'+(mine?'<b>¡Es tu turno!</b>':'Turno de <b>'+cp0.tok+' '+esc(cp0.name)+'</b>')+'</p></div><div class="bar"><div class="die" id="d">'+(GS.die||'🎲')+'</div>'+(mine&&GS.st==='turn'?'<button class="btn" id="r">Tirar dado</button>':'')+'</div></div>'+(GS.msg?'<p class="msg center">'+esc(GS.msg)+'</p>':'')+info+'<div class="board">'+cells+'</div><div class="legend"><span>🏠 Salida</span><span>❓ Pregunta</span><span>🎯 Reto</span><span>💭 Reflexión</span><span>🏆 Meta</span></div>'+(isHost()&&!mine?'<div class="center"><button class="btn ghost" id="sk">Saltar turno de '+esc(cp0.name)+'</button></div>':''));
+var rb=document.getElementById('r');if(rb)rb.onclick=roll;
+var sk=document.getElementById('sk');if(sk)sk.onclick=function(){var g=cp(GS);g.cur=(g.cur+1)%g.order.length;g.st='turn';g.n++;g.msg='Se saltó el turno de '+cp0.name;gref().set(g).catch(fail)};
+if(mine&&GS.st==='tile'){if(modalN!==GS.n){modalN=GS.n;landed()}}else close()}
+
+function roll(){
+this.disabled=true;var v=1+Math.floor(Math.random()*6),g=cp(GS),np=Math.min(29,g.pos[uid]+v);
+var d=document.getElementById('d');d.textContent=v;d.classList.add('roll');
+setTimeout(function(){g.die=v;g.pos[uid]=np;g.msg='';g.n++;if(np>=29){g.phase='done';g.winner=uid}else g.st='tile';gref().set(g).catch(fail)},500)}
+
+function fin(bonus,txt){
+var g=cp(GS),np=Math.min(29,g.pos[uid]+bonus);g.pos[uid]=np;g.msg=txt;g.n++;
+if(np>=29){g.phase='done';g.winner=uid}else{g.cur=(g.cur+1)%g.order.length;g.st='turn'}
+gref().set(g).catch(fail)}
+
+function landed(){
+var p=GS.pos[uid],t=tile(p),nm=ME.name;
+if(t.k==='b')return modal('<span class="tag" style="background:var(--sun)">Casilla libre</span><p class="msg">Aquí no hay nada. ¡Descansa un momento! 🌸</p><button class="btn" id="cn">Continuar</button>',function(){fin(0,nm+' cayó en una casilla libre')});
+var o=t.k==='q'?Q[t.n]:t.k==='c'?C[t.n]:R[t.n];
+var tag=t.k==='q'?'<span class="tag" style="background:var(--q)">❓ Pregunta</span>':t.k==='c'?'<span class="tag" style="background:var(--c)">🎯 Reto</span>':'<span class="tag" style="background:var(--r)">💭 Reflexión</span>';
+var head=tag+'<h2>'+esc(o.t)+'</h2>'+(o.h?'<p class="hint">Pista: '+esc(o.h)+'</p>':'');
+if(t.k==='r'||o.free){var b=o.free?1:0;
+return modal(head+'<button class="btn" id="cn">Ya respondí</button>',function(){fin(b,b?nm+' completó el reto y avanzó 1 casilla ✨':nm+' compartió su reflexión 💭')})}
+var opts=sh(o.o),bn=t.k==='q'?2:1;
+modal(head+opts.map(function(x){return '<button class="opt" data-i="'+x.i+'">'+esc(x.x)+'</button>'}).join('')+'<div id="fb"></div>',null,function(box){
+[].forEach.call(box.querySelectorAll('.opt'),function(b){b.onclick=function(){
+var good=+b.dataset.i===0;
+[].forEach.call(box.querySelectorAll('.opt'),function(x){x.disabled=true;if(+x.dataset.i===0)x.classList.add('ok')});
+if(!good)b.classList.add('no');
+var fb=box.querySelector('#fb');
+fb.innerHTML='<p class="msg">'+(good?'¡Correcto! Avanzas '+bn+(bn>1?' casillas':' casilla')+' 🎉':'No es esa. Pierdes el turno 💔')+'</p><button class="btn" id="cn2">Continuar</button>';
+fb.querySelector('#cn2').onclick=function(){close();if(good)fin(bn,nm+' respondió bien y avanzó '+bn+(bn>1?' casillas 🎉':' casilla 🎉'));else fin(0,nm+' falló y pierde el turno 💔')}}})})}
+
+var mEl=null;
+function close(){if(mEl){mEl.remove();mEl=null}}
+function modal(html,onCn,onOpen){
+close();mEl=document.createElement('div');mEl.className='modal';mEl.innerHTML='<div class="box" role="dialog" aria-modal="true">'+html+'</div>';
+document.body.appendChild(mEl);
+var box=mEl.firstChild,cn=box.querySelector('#cn');
+if(cn)cn.onclick=function(){close();onCn()};
+if(onOpen)onOpen(box)}
+
+function winScreen(){
+close();var p=P(GS.winner);
+$('<div class="card center"><div class="win">🏆</div><h1>¡'+esc(p.name)+' ganó!</h1><p style="font-size:3rem;margin:0">'+p.tok+'</p><p class="sub">Llegó primero a la meta. ¡Felicidades!</p>'+(isHost()?'<button class="btn" id="a">Nueva partida</button>':'<p class="sub">'+esc(PL[0].name)+' puede iniciar una nueva partida.</p>')+'</div>');
+var a=document.getElementById('a');
+if(a)a.onclick=function(){a.disabled=true;Promise.all(PL.map(function(q){return pdoc(q.id).delete()})).then(function(){return gref().set({phase:'lobby',n:0})}).then(function(){JT=null;modalN=-1}).catch(fail)}}
+
+init();
+</script>
+</body>
+</html>
