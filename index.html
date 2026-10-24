@@ -64,8 +64,7 @@ input[type=text]{font:inherit;width:100%;padding:12px 16px;border-radius:16px;bo
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
 <script>
-  import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
+
 var FIREBASE_CONFIG={
  apiKey: "AIzaSyDVOG5N3mEGTqSkOGtzIWGgki7_4XPAowo",
   authDomain: "juegocelula.firebaseapp.com",
@@ -77,8 +76,7 @@ var FIREBASE_CONFIG={
   measurementId: "G-X561MN9PLL"
 };
 
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
+
 var TOK=['⭐','🌸','💖','🦋','🎀','🌷','🍓','🌈','🐰','🌺'];
 var Q=[
 {t:'¿Quién escribió la carta a los romanos?',h:'Romanos 1:1',o:['Pablo','Pedro','Timoteo']},
